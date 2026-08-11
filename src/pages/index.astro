@@ -1,0 +1,146 @@
+---
+const pageTitle = 'Opto Sync — Local writes, consistent merges';
+const description = 'Durable local queues and one reconciliation contract for browsers, devices, backends, and Supabase.';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href="https://opto-sync.github.io/" />
+    <meta name="theme-color" content="#f4f0e7" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://opto-sync.github.io/" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Opto Sync home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>Opto Sync</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#loop">The loop</a>
+        <a href="#runtimes">Runtimes</a>
+        <a class="nav-cta" href="https://github.com/opto-sync">View GitHub</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span></span> Local-first reconciliation</p>
+          <h1 id="hero-title">Local writes now.<br /><em>Consistent merges everywhere.</em></h1>
+          <p class="lede">Opto Sync combines durable IndexedDB and SQLite queues with one reconciliation contract for browsers, devices, backends, and Supabase.</p>
+          <div class="actions">
+            <a class="button primary" href="https://github.com/opto-sync/opto-sync-clients">Explore the clients</a>
+            <a class="button secondary" href="#contract">Read the model</a>
+          </div>
+          <ul class="hero-facts" aria-label="Key properties">
+            <li><b>Optimistic</b><span>Local view never blinks out</span></li>
+            <li><b>Ordered</b><span>HTTP push and pull stays authoritative</span></li>
+            <li><b>Portable</b><span>One merge contract across runtimes</span></li>
+          </ul>
+        </div>
+
+        <div class="sync-board" aria-label="Diagram showing a local edit moving through a durable queue to the source of truth">
+          <div class="board-label">DOCUMENT / 0842</div>
+          <div class="local card">
+            <div class="card-top"><span>LOCAL VIEW</span><span class="live">ready</span></div>
+            <div class="document">
+              <span class="line long"></span><span class="line medium"></span><span class="line short"></span>
+              <span class="edit">new edit</span>
+            </div>
+            <div class="queue"><b>03</b><span>durable mutations</span></div>
+          </div>
+          <div class="transfer" aria-hidden="true">
+            <span class="pulse one"></span><span class="pulse two"></span><span class="pulse three"></span>
+            <b>ordered push / pull</b>
+          </div>
+          <div class="remote card">
+            <div class="card-top"><span>SOURCE OF TRUTH</span><span>rev 128</span></div>
+            <div class="merge">
+              <span>base</span><b>+</b><span>mutation</span><b>→</b><strong>merge</strong>
+            </div>
+            <div class="policies"><span>LWW</span><span>FWW</span><span>5 array strategies</span></div>
+          </div>
+          <div class="wake-hint"><span aria-hidden="true">↯</span><b>Realtime is a wake hint</b><small>It never replaces reconciliation.</small></div>
+        </div>
+      </section>
+
+      <section class="loop section" id="loop" aria-labelledby="loop-title">
+        <div class="section-heading">
+          <p class="kicker">The optimistic loop</p>
+          <h2 id="loop-title">Fast for the person. Explicit for the system.</h2>
+          <p>Each boundary has one job, so connection changes do not erase intent or invent authority.</p>
+        </div>
+        <ol class="steps">
+          <li><span>01</span><h3>Render locally</h3><p>Apply the mutation to the local view immediately.</p></li>
+          <li><span>02</span><h3>Queue durably</h3><p>Persist intent in IndexedDB or SQLite before transport.</p></li>
+          <li><span>03</span><h3>Reconcile in order</h3><p>Push and pull over HTTP against the authoritative revision.</p></li>
+          <li><span>04</span><h3>Merge by contract</h3><p>Resolve documents with the same tested policy everywhere.</p></li>
+        </ol>
+      </section>
+
+      <section class="contract section" id="contract" aria-labelledby="contract-title">
+        <div class="contract-copy">
+          <p class="kicker">One merge contract</p>
+          <h2 id="contract-title">Native where it matters. Compatible everywhere else.</h2>
+          <p>The C reconciliation core exposes bindings across browsers, servers, mobile clients, WebAssembly, Go, and the BEAM. A Rust-native core provides compatible native, C ABI, and WASM surfaces.</p>
+          <div class="policy-row" aria-label="Supported selection and array policies">
+            <span>Last write wins</span><span>First write wins</span><span>Replace</span><span>Append</span><span>Merge by key</span>
+          </div>
+        </div>
+        <div class="contract-window" aria-label="Example reconciliation contract">
+          <div class="window-bar"><i></i><i></i><i></i><span>reconcile.json</span></div>
+          <pre><code><span class="muted">&#123;</span>
+  <span class="key">"baseRevision"</span>: <span class="value">"127"</span>,
+  <span class="key">"mutationId"</span>: <span class="value">"device-8:441"</span>,
+  <span class="key">"timestamp"</span>: <span class="value">"1786471229000001"</span>,
+  <span class="key">"objectPolicy"</span>: <span class="value">"deep-merge"</span>,
+  <span class="key">"arrayPolicy"</span>: <span class="value">"merge-by-key"</span>
+<span class="muted">&#125;</span></code></pre>
+        </div>
+      </section>
+
+      <section class="runtimes section" id="runtimes" aria-labelledby="runtimes-title">
+        <div class="section-heading compact">
+          <p class="kicker">Runtime parity</p>
+          <h2 id="runtimes-title">One protocol, many places to run it.</h2>
+        </div>
+        <div class="runtime-grid">
+          <article><b>Client SDKs</b><p>Dart · TypeScript · Rust · Gleam</p></article>
+          <article><b>Merge surfaces</b><p>C · WASM · Go · BEAM · Rust</p></article>
+          <article><b>Durable stores</b><p>IndexedDB · SQLite · PostgreSQL</p></article>
+          <article><b>Backends</b><p>Axum · Node · Supabase / PostgREST</p></article>
+        </div>
+      </section>
+
+      <section class="evidence section" aria-labelledby="evidence-title">
+        <div>
+          <p class="kicker">Evidence, not drift</p>
+          <h2 id="evidence-title">Differential and end-to-end tests keep the contract honest.</h2>
+        </div>
+        <p>The test fleet exercises Node and PostgreSQL, Rust and Axum, Dart, Sagitta, and Supabase paths. Cross-runtime behavior is checked at the boundary where subtle merge differences actually surface.</p>
+        <a href="https://github.com/opto-sync/opto-sync-e2e">Inspect the E2E repository <span aria-hidden="true">→</span></a>
+      </section>
+    </main>
+
+    <footer>
+      <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>Opto Sync</span></a>
+      <p>Local-first data, without a second definition of truth.</p>
+      <div><a href="https://github.com/opto-sync/syncer.c">syncer.c</a><a href="https://github.com/opto-sync/syncer.rs">syncer.rs</a><a href="https://github.com/opto-sync">GitHub</a></div>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  :root{--paper:#f4f0e7;--ink:#17201c;--muted:#58645c;--line:#c9c9b9;--acid:#d7ff59;--violet:#6248a8;--teal:#1f6e5b;--white:#fffdf7;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--paper);font-synthesis:none}
+  *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:linear-gradient(90deg,rgba(23,32,28,.035) 1px,transparent 1px),linear-gradient(rgba(23,32,28,.035) 1px,transparent 1px),var(--paper);background-size:32px 32px}a{color:inherit}.skip-link{position:fixed;left:1rem;top:-4rem;z-index:99;padding:.8rem 1rem;background:var(--ink);color:white}.skip-link:focus{top:1rem}.site-header,main,footer{width:min(1180px,calc(100% - 40px));margin-inline:auto}.site-header{height:84px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{display:inline-flex;gap:.7rem;align-items:center;text-decoration:none;font-weight:800;letter-spacing:-.02em}.brand-mark{position:relative;width:30px;height:24px;display:inline-block}.brand-mark i{position:absolute;display:block;width:21px;height:14px;border:2px solid var(--ink);border-radius:3px}.brand-mark i:nth-child(1){left:0;top:0;background:var(--paper)}.brand-mark i:nth-child(2){left:4px;top:4px;background:var(--acid)}.brand-mark i:nth-child(3){left:8px;top:8px;background:var(--violet)}nav{display:flex;align-items:center;gap:1.7rem;font-size:.88rem;font-weight:700}nav a{text-decoration:none}nav a:hover{text-decoration:underline;text-underline-offset:5px}.nav-cta{border:1px solid var(--ink);padding:.7rem 1rem;border-radius:99px}.hero{min-height:690px;display:grid;grid-template-columns:1.05fr .95fr;gap:6vw;align-items:center;padding:70px 0 80px}.eyebrow,.kicker{font-size:.75rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase}.eyebrow{display:flex;align-items:center;gap:.6rem}.eyebrow span{width:9px;height:9px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 5px rgba(31,110,91,.13)}h1,h2,h3,p{margin-top:0}h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(3.6rem,7.4vw,6.8rem);line-height:.88;letter-spacing:-.07em;margin:1.6rem 0 2rem;font-weight:500}h1 em{color:var(--violet);font-weight:500}h2{font-family:Georgia,"Times New Roman",serif;font-size:clamp(2.4rem,4.7vw,4.6rem);line-height:.98;letter-spacing:-.055em;font-weight:500}.lede{font-size:1.18rem;line-height:1.65;color:var(--muted);max-width:630px}.actions{display:flex;gap:.8rem;flex-wrap:wrap;margin:2rem 0 2.7rem}.button{display:inline-flex;padding:.9rem 1.2rem;border:1px solid var(--ink);border-radius:3px;text-decoration:none;font-weight:800;font-size:.9rem}.button.primary{background:var(--ink);color:var(--white)}.button.secondary{background:var(--white)}.button:hover{transform:translateY(-2px);box-shadow:4px 4px 0 var(--acid)}.hero-facts{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line)}.hero-facts li{padding:1rem .8rem 0 0}.hero-facts b,.hero-facts span{display:block}.hero-facts b{font-size:.8rem}.hero-facts span{font-size:.72rem;color:var(--muted);margin-top:.25rem;line-height:1.4}.sync-board{position:relative;background:var(--ink);color:var(--white);padding:46px 28px 28px;min-height:540px;box-shadow:14px 14px 0 var(--violet)}.board-label{position:absolute;top:16px;left:28px;font:700 .63rem ui-monospace,monospace;letter-spacing:.14em;color:#aab6ae}.card{background:#fffdf7;color:var(--ink);padding:18px;border-radius:3px}.card-top{display:flex;justify-content:space-between;font:800 .62rem ui-monospace,monospace;letter-spacing:.08em;border-bottom:1px solid var(--line);padding-bottom:11px}.live{color:var(--teal)}.document{padding:23px 0 20px;position:relative}.line{height:7px;display:block;background:#dad9cf;margin:8px 0}.line.long{width:84%}.line.medium{width:68%}.line.short{width:47%}.edit{position:absolute;right:0;top:37px;background:var(--acid);padding:.35rem .45rem;font:800 .63rem ui-monospace,monospace;transform:rotate(-3deg)}.queue{display:flex;align-items:baseline;gap:.65rem;border-top:1px dashed var(--line);padding-top:12px}.queue b{font:800 1.7rem ui-monospace,monospace;color:var(--violet)}.queue span{font-size:.72rem;color:var(--muted)}.transfer{height:74px;display:flex;align-items:center;justify-content:center;gap:8px;position:relative}.transfer .pulse{width:7px;height:7px;background:var(--acid);border-radius:50%}.transfer .two{opacity:.65}.transfer .three{opacity:.3}.transfer b{margin-left:8px;font:700 .64rem ui-monospace,monospace;color:#b9c5bd}.merge{display:flex;align-items:center;gap:.7rem;padding:25px 0 20px;font:700 .7rem ui-monospace,monospace}.merge span{border:1px solid var(--line);padding:.5rem}.merge strong{background:var(--violet);color:white;padding:.55rem}.policies{display:flex;gap:.35rem;flex-wrap:wrap}.policies span{background:#eae7dc;padding:.32rem .5rem;font:700 .59rem ui-monospace,monospace}.wake-hint{margin-top:18px;border:1px solid #536058;padding:12px;display:grid;grid-template-columns:auto 1fr;column-gap:10px;align-items:center}.wake-hint>span{grid-row:1/3;font-size:1.8rem;color:var(--acid)}.wake-hint b{font-size:.72rem}.wake-hint small{color:#aab6ae}.section{padding:110px 0;border-top:1px solid var(--line)}.section-heading{display:grid;grid-template-columns:.35fr 1fr .65fr;gap:2rem;align-items:start;margin-bottom:55px}.section-heading .kicker{color:var(--violet)}.section-heading h2{margin:0}.section-heading>p:last-child{color:var(--muted);line-height:1.7}.steps{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);background:var(--white)}.steps li{padding:28px;min-height:225px;border-right:1px solid var(--line)}.steps li:last-child{border-right:0}.steps span{font:800 .7rem ui-monospace,monospace;color:var(--violet)}.steps h3{margin:3.3rem 0 .7rem;font-size:1rem}.steps p{color:var(--muted);line-height:1.55;font-size:.88rem}.contract{display:grid;grid-template-columns:1fr .9fr;gap:7vw;align-items:center}.contract-copy>p:not(.kicker){color:var(--muted);line-height:1.75}.policy-row{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:2rem}.policy-row span{border:1px solid var(--line);background:var(--white);padding:.45rem .6rem;font-size:.68rem;font-weight:800}.contract-window{background:#201d26;color:#f6f0ff;box-shadow:10px 10px 0 var(--acid)}.window-bar{height:42px;background:#302b39;display:flex;align-items:center;gap:6px;padding:0 14px}.window-bar i{width:8px;height:8px;border-radius:50%;background:#706878}.window-bar i:nth-child(1){background:#ef786d}.window-bar i:nth-child(2){background:#f2c867}.window-bar i:nth-child(3){background:#6bcf9a}.window-bar span{margin-left:auto;font:600 .65rem ui-monospace,monospace;color:#a9a0b5}.contract-window pre{margin:0;padding:30px;overflow:auto;font-size:.77rem;line-height:1.9}.key{color:#bdb0ff}.value{color:#d7ff59}.muted{color:#82788d}.section-heading.compact{grid-template-columns:.35fr 1.65fr}.runtime-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.runtime-grid article{border-top:3px solid var(--ink);background:var(--white);padding:24px;min-height:140px}.runtime-grid article:nth-child(2){border-color:var(--violet)}.runtime-grid article:nth-child(3){border-color:var(--teal)}.runtime-grid article:nth-child(4){border-color:#d59a22}.runtime-grid b{font-size:.8rem}.runtime-grid p{margin-top:2rem;color:var(--muted);line-height:1.6;font-size:.86rem}.evidence{display:grid;grid-template-columns:1fr .7fr auto;gap:4vw;align-items:end;background:var(--acid);padding-inline:40px;border:1px solid var(--ink)}.evidence h2{font-size:clamp(2rem,3.7vw,3.7rem);margin:0}.evidence>p{line-height:1.7;color:#384238}.evidence>a{font-weight:900;text-decoration:none;border-bottom:2px solid;padding-bottom:.3rem;white-space:nowrap}footer{padding:55px 0 70px;display:grid;grid-template-columns:1fr 1fr auto;align-items:center;gap:2rem}footer p{color:var(--muted);margin:0}footer div{display:flex;gap:1.2rem}footer div a{font-size:.76rem;font-weight:800}
+  :focus-visible{outline:3px solid var(--violet);outline-offset:4px}@media(max-width:900px){.hero{grid-template-columns:1fr;padding-top:50px}.sync-board{max-width:620px}.section-heading,.contract,.evidence{grid-template-columns:1fr}.steps,.runtime-grid{grid-template-columns:repeat(2,1fr)}.steps li:nth-child(2){border-right:0}.steps li{border-bottom:1px solid var(--line)}.evidence{align-items:start}.evidence>a{width:max-content}footer{grid-template-columns:1fr}}@media(max-width:620px){.site-header{height:auto;padding:20px 0;align-items:flex-start}.site-header nav>a:not(.nav-cta){display:none}.hero{padding-top:45px}h1{font-size:3.55rem}.hero-facts{grid-template-columns:1fr}.hero-facts li{display:grid;grid-template-columns:90px 1fr}.sync-board{padding-inline:16px;box-shadow:7px 7px 0 var(--violet)}.section{padding:78px 0}.section-heading,.section-heading.compact{grid-template-columns:1fr;gap:.8rem}.steps,.runtime-grid{grid-template-columns:1fr}.steps li{border-right:0}.evidence{padding-inline:22px}.contract-window pre{font-size:.64rem;padding:20px}.site-header,main,footer{width:min(100% - 26px,1180px)}footer div{flex-wrap:wrap}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.button:hover{transform:none}}
+</style>

@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://opto-sync.github.io/sitemap-index.xml
