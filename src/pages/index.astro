@@ -1,4 +1,6 @@
 ---
+import AnnouncementBar from '../components/AnnouncementBar.astro';
+
 const pageTitle = 'Opto Sync — Local writes, consistent merges';
 const description = 'Durable local queues and one reconciliation contract for browsers, devices, backends, and Supabase.';
 ---
@@ -19,6 +21,13 @@ const description = 'Durable local queues and one reconciliation contract for br
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
+    <AnnouncementBar
+      storageKey="site-announcement:opto-sync:v1"
+      message="Happy 2026, y’all!"
+      href="https://github.com/opto-sync"
+      linkLabel="See what we’re building"
+      tone="mint"
+    />
     <header class="site-header fleet-nav-enhanced">
       <a class="brand" href="/" aria-label="Opto Sync home">
         <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
